@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Imperium Academy | Student Portal</title>
+
+  <title>Imperium Academy Student Portal</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -12,25 +13,24 @@
       font-family: Arial, sans-serif;
       background: #f4f6f8;
       margin: 0;
-      padding: 30px 15px;
+      padding: 20px;
     }
 
     .container {
-      max-width: 500px;
+      max-width: 600px;
       margin: auto;
+    }
+
+    .card {
       background: white;
       padding: 25px;
+      margin-bottom: 20px;
       border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
     }
 
-    h1 {
+    h1, h2 {
       text-align: center;
-      margin-bottom: 5px;
-    }
-
-    h2 {
-      text-align: center;
-      font-weight: normal;
     }
 
     input, select, button {
@@ -45,11 +45,26 @@
     button {
       cursor: pointer;
       font-weight: bold;
+      background: #111;
+      color: white;
+    }
+
+    .total {
+      text-align: center;
+      font-size: 50px;
+      font-weight: bold;
+    }
+
+    .programme {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+      border-bottom: 1px solid #eee;
     }
 
     #message {
-      margin-top: 15px;
       text-align: center;
+      margin-top: 15px;
     }
   </style>
 </head>
@@ -58,53 +73,108 @@
 
 <div class="container">
 
-  <h1>IMPERIUM ACADEMY</h1>
-  <h2>Student Registration Portal</h2>
+  <div class="card">
 
-  <form id="registrationForm">
+    <h1>IMPERIUM ACADEMY</h1>
 
-    <input
-      type="text"
-      id="fullName"
-      placeholder="Full Name"
-      required
-    >
+    <h2>Student Registration</h2>
 
-    <input
-      type="email"
-      id="email"
-      placeholder="Email Address"
-      required
-    >
+    <form id="registrationForm">
 
-    <input
-      type="tel"
-      id="phone"
-      placeholder="Phone Number"
-      required
-    >
+      <input
+        type="text"
+        id="fullName"
+        placeholder="Full Name"
+        required
+      >
 
-    <select id="programme" required>
-      <option value="">Select Programme</option>
-      <option value="JAMB">JAMB</option>
-      <option value="WAEC">WAEC</option>
-      <option value="NECO">NECO</option>
-      <option value="POST-UTME">POST-UTME</option>
-      <option value="JUPEB">JUPEB</option>
-    </select>
+      <input
+        type="email"
+        id="email"
+        placeholder="Email Address"
+        required
+      >
 
-    <button type="submit">Create Student Account</button>
+      <input
+        type="tel"
+        id="phone"
+        placeholder="Phone Number"
+        required
+      >
 
-  </form>
+      <select id="programme" required>
 
-  <div id="message"></div>
+        <option value="">Select Programme</option>
+
+        <option value="JAMB">JAMB</option>
+
+        <option value="WAEC">WAEC</option>
+
+        <option value="NECO">NECO</option>
+
+        <option value="POST-UTME">POST-UTME</option>
+
+        <option value="JUPEB">JUPEB</option>
+
+      </select>
+
+      <button type="submit">
+        Register Student
+      </button>
+
+    </form>
+
+    <div id="message"></div>
+
+  </div>
+
+
+  <div class="card">
+
+    <h2>Imperium Student Statistics</h2>
+
+    <div class="total" id="totalStudents">
+      -
+    </div>
+
+    <p style="text-align:center">
+      Total Registered Students
+    </p>
+
+    <div class="programme">
+      <span>JAMB</span>
+      <strong id="jamb">0</strong>
+    </div>
+
+    <div class="programme">
+      <span>WAEC</span>
+      <strong id="waec">0</strong>
+    </div>
+
+    <div class="programme">
+      <span>NECO</span>
+      <strong id="neco">0</strong>
+    </div>
+
+    <div class="programme">
+      <span>POST-UTME</span>
+      <strong id="postutme">0</strong>
+    </div>
+
+    <div class="programme">
+      <span>JUPEB</span>
+      <strong id="jupeb">0</strong>
+    </div>
+
+  </div>
 
 </div>
 
+
 <script>
 
-const SUPABASE_URL = "https://bfszdwhapqghcxlupyhj.supabase.co";
-const SUPABASE_KEY = "sb_publishable_j8W0he7WK4tkKcHCrg8sGg_u7aZQZeu";
+const SUPABASE_URL = "YOUR_SUPABASE_URL";
+const SUPABASE_KEY = "YOUR_SUPABASE_PUBLISHABLE_KEY";
 
 const { createClient } = supabase;
 
@@ -112,6 +182,9 @@ const db = createClient(
   SUPABASE_URL,
   SUPABASE_KEY
 );
+
+
+// REGISTER STUDENT
 
 document
   .getElementById("registrationForm")
@@ -136,35 +209,93 @@ document
 
     message.textContent = "Registering...";
 
-    const { data, error } = await db
+    const { error } = await db
       .from("students")
-      .insert([
-        {
-          full_name: fullName,
-          email: email,
-          phone: phone,
-          programme: programme
-        }
-      ]);
+      .insert({
+        full_name: fullName,
+        email: email,
+        phone: phone,
+        programme: programme
+      });
 
     if (error) {
-
-      console.error(error);
 
       message.textContent =
         "Registration failed: " + error.message;
 
       return;
+
     }
 
     message.textContent =
-      "Registration successful! Welcome to Imperium Academy.";
+      "Registration successful!";
 
     document
       .getElementById("registrationForm")
       .reset();
 
+    loadStatistics();
+
+});
+
+
+// LOAD STATISTICS
+
+async function loadStatistics() {
+
+  const { data, error } =
+    await db
+      .from("students")
+      .select("programme");
+
+  if (error) {
+
+    console.error(error);
+
+    return;
+
+  }
+
+  document.getElementById("totalStudents")
+    .textContent = data.length;
+
+  let counts = {
+    JAMB: 0,
+    WAEC: 0,
+    NECO: 0,
+    "POST-UTME": 0,
+    JUPEB: 0
+  };
+
+  data.forEach(student => {
+
+    if (counts[student.programme] !== undefined) {
+
+      counts[student.programme]++;
+
+    }
+
   });
+
+  document.getElementById("jamb")
+    .textContent = counts.JAMB;
+
+  document.getElementById("waec")
+    .textContent = counts.WAEC;
+
+  document.getElementById("neco")
+    .textContent = counts.NECO;
+
+  document.getElementById("postutme")
+    .textContent = counts["POST-UTME"];
+
+  document.getElementById("jupeb")
+    .textContent = counts.JUPEB;
+
+}
+
+
+loadStatistics();
 
 </script>
 
