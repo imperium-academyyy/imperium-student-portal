@@ -3,37 +3,170 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Imperium Academy Student Portal</title>
+  <title>Imperium Academy | Student Portal</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      margin: 0;
+      padding: 30px 15px;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 5px;
+    }
+
+    h2 {
+      text-align: center;
+      font-weight: normal;
+    }
+
+    input, select, button {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 13px;
+      margin-top: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    #message {
+      margin-top: 15px;
+      text-align: center;
+    }
+  </style>
 </head>
 
 <body>
+
+<div class="container">
+
   <h1>IMPERIUM ACADEMY</h1>
   <h2>Student Registration Portal</h2>
 
-  <p>Register your student account below.</p>
+  <form id="registrationForm">
 
-  <form>
-    <input type="text" placeholder="Full Name" required>
-    <br><br>
+    <input
+      type="text"
+      id="fullName"
+      placeholder="Full Name"
+      required
+    >
 
-    <input type="email" placeholder="Email Address" required>
-    <br><br>
+    <input
+      type="email"
+      id="email"
+      placeholder="Email Address"
+      required
+    >
 
-    <input type="tel" placeholder="Phone Number" required>
-    <br><br>
+    <input
+      type="tel"
+      id="phone"
+      placeholder="Phone Number"
+      required
+    >
 
-    <select required>
+    <select id="programme" required>
       <option value="">Select Programme</option>
-      <option>JAMB</option>
-      <option>WAEC</option>
-      <option>NECO</option>
-      <option>POST-UTME</option>
-      <option>JUPEB</option>
+      <option value="JAMB">JAMB</option>
+      <option value="WAEC">WAEC</option>
+      <option value="NECO">NECO</option>
+      <option value="POST-UTME">POST-UTME</option>
+      <option value="JUPEB">JUPEB</option>
     </select>
-    <br><br>
 
-    <button type="submit">Create Account</button>
+    <button type="submit">Create Student Account</button>
+
   </form>
+
+  <div id="message"></div>
+
+</div>
+
+<script>
+
+const SUPABASE_URL = "PASTE_YOUR_PROJECT_URL_HERE";
+const SUPABASE_KEY = "PASTE_YOUR_PUBLISHABLE_KEY_HERE";
+
+const { createClient } = supabase;
+
+const db = createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+document
+  .getElementById("registrationForm")
+  .addEventListener("submit", async function(event) {
+
+    event.preventDefault();
+
+    const fullName =
+      document.getElementById("fullName").value.trim();
+
+    const email =
+      document.getElementById("email").value.trim();
+
+    const phone =
+      document.getElementById("phone").value.trim();
+
+    const programme =
+      document.getElementById("programme").value;
+
+    const message =
+      document.getElementById("message");
+
+    message.textContent = "Registering...";
+
+    const { data, error } = await db
+      .from("students")
+      .insert([
+        {
+          full_name: fullName,
+          email: email,
+          phone: phone,
+          programme: programme
+        }
+      ]);
+
+    if (error) {
+
+      console.error(error);
+
+      message.textContent =
+        "Registration failed: " + error.message;
+
+      return;
+    }
+
+    message.textContent =
+      "Registration successful! Welcome to Imperium Academy.";
+
+    document
+      .getElementById("registrationForm")
+      .reset();
+
+  });
+
+</script>
 
 </body>
 </html>
