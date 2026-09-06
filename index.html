@@ -3,68 +3,120 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Imperium Academy Student Portal</title>
+  <title>Imperium Academy - Student Registration</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f6f8;
+    * {
+      box-sizing: border-box;
       margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f4f7fb;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       padding: 20px;
     }
 
     .container {
-      max-width: 600px;
-      margin: auto;
-    }
-
-    .card {
-      background: white;
-      padding: 25px;
-      margin-bottom: 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    }
-
-    h1, h2 {
-      text-align: center;
-    }
-
-    input, select, button {
       width: 100%;
-      box-sizing: border-box;
+      max-width: 500px;
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .header h1 {
+      color: #123c69;
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      color: #666;
+      font-size: 14px;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 6px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    input, select {
+      width: 100%;
       padding: 13px;
-      margin-top: 10px;
-      border-radius: 6px;
       border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 15px;
+      outline: none;
+    }
+
+    input:focus, select:focus {
+      border-color: #123c69;
     }
 
     button {
-      cursor: pointer;
-      font-weight: bold;
-      background: #111;
+      width: 100%;
+      padding: 14px;
+      margin-top: 20px;
+      border: none;
+      border-radius: 8px;
+      background: #123c69;
       color: white;
-    }
-
-    .total {
-      text-align: center;
-      font-size: 50px;
+      font-size: 16px;
       font-weight: bold;
+      cursor: pointer;
     }
 
-    .programme {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px;
-      border-bottom: 1px solid #eee;
+    button:hover {
+      opacity: 0.9;
     }
 
-    #message {
-      text-align: center;
+    .secondary {
+      background: #777;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .message {
       margin-top: 15px;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .success {
+      background: #e8f7ed;
+      color: #18733a;
+    }
+
+    .error {
+      background: #fdeaea;
+      color: #b42318;
+    }
+
+    .otp-box {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #eee;
     }
   </style>
 </head>
@@ -73,53 +125,52 @@
 
 <div class="container">
 
-  <div class="card">
-
+  <div class="header">
     <h1>IMPERIUM ACADEMY</h1>
+    <p>Student Registration Portal</p>
+  </div>
 
-    <h2>Student Registration</h2>
+  <!-- REGISTRATION FORM -->
+  <div id="registrationSection">
 
     <form id="registrationForm">
 
+      <label>Full Name</label>
       <input
         type="text"
         id="fullName"
-        placeholder="Full Name"
+        placeholder="Enter your full name"
         required
       >
 
+      <label>Email Address</label>
       <input
         type="email"
         id="email"
-        placeholder="Email Address"
+        placeholder="Enter your email"
         required
       >
 
+      <label>Phone Number</label>
       <input
         type="tel"
         id="phone"
-        placeholder="Phone Number"
+        placeholder="Enter your phone number"
         required
       >
 
+      <label>Programme</label>
       <select id="programme" required>
-
-        <option value="">Select Programme</option>
-
+        <option value="">Select programme</option>
         <option value="JAMB">JAMB</option>
-
         <option value="WAEC">WAEC</option>
-
         <option value="NECO">NECO</option>
-
         <option value="POST-UTME">POST-UTME</option>
-
         <option value="JUPEB">JUPEB</option>
-
       </select>
 
       <button type="submit">
-        Register Student
+        Send OTP
       </button>
 
     </form>
@@ -129,41 +180,43 @@
   </div>
 
 
-  <div class="card">
+  <!-- OTP SECTION -->
+  <div id="otpSection" class="hidden">
 
-    <h2>Imperium Student Statistics</h2>
+    <div class="otp-box">
 
-    <div class="total" id="totalStudents">
-      -
-    </div>
+      <h3 style="text-align:center; color:#123c69;">
+        Verify Your Email
+      </h3>
 
-    <p style="text-align:center">
-      Total Registered Students
-    </p>
+      <p style="text-align:center; margin-top:10px; color:#666;">
+        Enter the OTP sent to your email address.
+      </p>
 
-    <div class="programme">
-      <span>JAMB</span>
-      <strong id="jamb">0</strong>
-    </div>
+      <label>OTP Code</label>
 
-    <div class="programme">
-      <span>WAEC</span>
-      <strong id="waec">0</strong>
-    </div>
+      <input
+        type="text"
+        id="otp"
+        placeholder="Enter 6-digit OTP"
+        maxlength="6"
+        inputmode="numeric"
+      >
 
-    <div class="programme">
-      <span>NECO</span>
-      <strong id="neco">0</strong>
-    </div>
+      <button id="verifyBtn">
+        Verify OTP & Complete Registration
+      </button>
 
-    <div class="programme">
-      <span>POST-UTME</span>
-      <strong id="postutme">0</strong>
-    </div>
+      <button id="resendBtn" class="secondary">
+        Resend OTP
+      </button>
 
-    <div class="programme">
-      <span>JUPEB</span>
-      <strong id="jupeb">0</strong>
+      <button id="changeEmailBtn" class="secondary">
+        Change Email
+      </button>
+
+      <div id="otpMessage"></div>
+
     </div>
 
   </div>
@@ -173,129 +226,283 @@
 
 <script>
 
-const SUPABASE_URL = "https://bfszdwhapqghcxlupyhj.supabase.co";
-const SUPABASE_KEY = "sb_publishable_j8W0he7WK4tkKcHCrg8sGg_u7aZQZeu";
+  // ==========================================
+  // SUPABASE CONNECTION
+  // ==========================================
 
-const { createClient } = supabase;
+  const SUPABASE_URL = "YOUR_SUPABASE_PROJECT_URL";
 
-const db = createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
+  const SUPABASE_KEY = "YOUR_SUPABASE_PUBLISHABLE_KEY";
+
+  const db = supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
 
 
-// REGISTER STUDENT
+  // ==========================================
+  // VARIABLES
+  // ==========================================
 
-document
-  .getElementById("registrationForm")
-  .addEventListener("submit", async function(event) {
+  let registrationData = {
+    fullName: "",
+    email: "",
+    phone: "",
+    programme: ""
+  };
 
-    event.preventDefault();
 
-    const fullName =
+  // ==========================================
+  // ELEMENTS
+  // ==========================================
+
+  const registrationForm =
+    document.getElementById("registrationForm");
+
+  const registrationSection =
+    document.getElementById("registrationSection");
+
+  const otpSection =
+    document.getElementById("otpSection");
+
+  const message =
+    document.getElementById("message");
+
+  const otpMessage =
+    document.getElementById("otpMessage");
+
+
+  // ==========================================
+  // SEND OTP
+  // ==========================================
+
+  registrationForm.addEventListener("submit", async function(e) {
+
+    e.preventDefault();
+
+    message.innerHTML = "";
+
+    registrationData.fullName =
       document.getElementById("fullName").value.trim();
 
-    const email =
+    registrationData.email =
       document.getElementById("email").value.trim();
 
-    const phone =
+    registrationData.phone =
       document.getElementById("phone").value.trim();
 
-    const programme =
+    registrationData.programme =
       document.getElementById("programme").value;
 
-    const message =
-      document.getElementById("message");
 
-    message.textContent = "Registering...";
+    const { error } = await db.auth.signInWithOtp({
 
-    const { error } = await db
-      .from("students")
-      .insert({
-        full_name: fullName,
-        email: email,
-        phone: phone,
-        programme: programme
-      });
+      email: registrationData.email,
+
+      options: {
+        shouldCreateUser: true
+      }
+
+    });
+
 
     if (error) {
 
+      message.className = "message error";
+
       message.textContent =
-        "Registration failed: " + error.message;
+        "Unable to send OTP: " + error.message;
 
       return;
-
     }
+
+
+    message.className = "message success";
 
     message.textContent =
-      "Registration successful!";
-
-    document
-      .getElementById("registrationForm")
-      .reset();
-
-    loadStatistics();
-
-});
+      "OTP sent. Check your email.";
 
 
-// LOAD STATISTICS
+    registrationSection.classList.add("hidden");
 
-async function loadStatistics() {
-
-  const { data, error } =
-    await db
-      .from("students")
-      .select("programme");
-
-  if (error) {
-
-    console.error(error);
-
-    return;
-
-  }
-
-  document.getElementById("totalStudents")
-    .textContent = data.length;
-
-  let counts = {
-    JAMB: 0,
-    WAEC: 0,
-    NECO: 0,
-    "POST-UTME": 0,
-    JUPEB: 0
-  };
-
-  data.forEach(student => {
-
-    if (counts[student.programme] !== undefined) {
-
-      counts[student.programme]++;
-
-    }
+    otpSection.classList.remove("hidden");
 
   });
 
-  document.getElementById("jamb")
-    .textContent = counts.JAMB;
 
-  document.getElementById("waec")
-    .textContent = counts.WAEC;
+  // ==========================================
+  // VERIFY OTP
+  // ==========================================
 
-  document.getElementById("neco")
-    .textContent = counts.NECO;
+  document
+    .getElementById("verifyBtn")
+    .addEventListener("click", async function() {
 
-  document.getElementById("postutme")
-    .textContent = counts["POST-UTME"];
+      otpMessage.innerHTML = "";
 
-  document.getElementById("jupeb")
-    .textContent = counts.JUPEB;
-
-}
+      const otp =
+        document.getElementById("otp").value.trim();
 
 
-loadStatistics();
+      if (!otp) {
+
+        otpMessage.className = "message error";
+
+        otpMessage.textContent =
+          "Please enter the OTP.";
+
+        return;
+      }
+
+
+      const { data, error } =
+        await db.auth.verifyOtp({
+
+          email: registrationData.email,
+
+          token: otp,
+
+          type: "email"
+
+        });
+
+
+      if (error) {
+
+        otpMessage.className = "message error";
+
+        otpMessage.textContent =
+          "Invalid or expired OTP: " + error.message;
+
+        return;
+      }
+
+
+      // ========================================
+      // IMPORTANT:
+      // GET AUTHENTICATED USER AFTER OTP
+      // ========================================
+
+      const user = data.user;
+
+
+      if (!user) {
+
+        otpMessage.className = "message error";
+
+        otpMessage.textContent =
+          "Verification succeeded, but no user session was created.";
+
+        return;
+      }
+
+
+      // ========================================
+      // INSERT STUDENT PROFILE
+      // ========================================
+
+      const { error: insertError } =
+        await db
+          .from("students")
+          .insert([{
+
+            user_id: user.id,
+
+            full_name: registrationData.fullName,
+
+            email: registrationData.email,
+
+            phone: registrationData.phone,
+
+            programme: registrationData.programme
+
+          }]);
+
+
+      if (insertError) {
+
+        otpMessage.className = "message error";
+
+        otpMessage.textContent =
+          "Registration failed: " + insertError.message;
+
+        return;
+      }
+
+
+      // ========================================
+      // SUCCESS
+      // ========================================
+
+      otpMessage.className = "message success";
+
+      otpMessage.textContent =
+        "Registration successful! Welcome to Imperium Academy.";
+
+
+      document
+        .getElementById("verifyBtn")
+        .disabled = true;
+
+    });
+
+
+  // ==========================================
+  // RESEND OTP
+  // ==========================================
+
+  document
+    .getElementById("resendBtn")
+    .addEventListener("click", async function() {
+
+      otpMessage.innerHTML = "";
+
+      const { error } =
+        await db.auth.signInWithOtp({
+
+          email: registrationData.email,
+
+          options: {
+            shouldCreateUser: true
+          }
+
+        });
+
+
+      if (error) {
+
+        otpMessage.className = "message error";
+
+        otpMessage.textContent =
+          "Unable to resend OTP: " + error.message;
+
+        return;
+      }
+
+
+      otpMessage.className = "message success";
+
+      otpMessage.textContent =
+        "A new OTP has been sent.";
+
+    });
+
+
+  // ==========================================
+  // CHANGE EMAIL
+  // ==========================================
+
+  document
+    .getElementById("changeEmailBtn")
+    .addEventListener("click", function() {
+
+      otpSection.classList.add("hidden");
+
+      registrationSection.classList.remove("hidden");
+
+      document.getElementById("otp").value = "";
+
+    });
 
 </script>
 
